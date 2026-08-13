@@ -1,12 +1,6 @@
 {
   "name": "Jarvis AI Assistant",
-  "user": "ubuntu",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": "."
-  },
   "install": "bash .cursor/install.sh",
   "start": "bash .cursor/start.sh",
-  "ports": [8000],
-  "chromeExecutablePath": "/usr/bin/google-chrome"
+  "ports": [8000]
 }
