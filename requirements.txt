@@ -21,7 +21,7 @@ pyautogui==0.9.54
 pywhatkit==5.4
 
 # Database
-sqlite3
+# sqlite3 is part of the Python standard library; no PyPI install required
 
 # Web & HTTP
 requests==2.31.0
