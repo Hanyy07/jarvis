@@ -5,13 +5,17 @@ import webbrowser
 import eel
 
 from backend.auth.recognize import AuthenticateFace
-from backend.command import take_command
+from backend.command import takecommand
 from backend.config import (FRONTEND_INDEX_FILE, FRONTEND_PATH, USER_NAME,
                             WEB_SERVER_BLOCK, WEB_SERVER_HOST, WEB_SERVER_MODE,
                             WEB_SERVER_PORT)
 from backend.feature import play_assistant_sound, speak
-from backend.feature.reminder import set_reminder
 from backend.feedback import StatusIndicator, Timer
+
+try:
+    from backend.feature.reminder import set_reminder
+except ImportError:
+    set_reminder = None
 
 # Events for coordination and clean shutdown
 auth_complete = threading.Event()
@@ -30,8 +34,8 @@ def command_handler(stop_event):
 
     while not stop_event.is_set():
         try:
-            # take_command may return None; handle that safely
-            raw = take_command()
+            # takecommand may return None; handle that safely
+            raw = takecommand()
             if not raw:
                 continue
             command = raw.lower()
@@ -40,8 +44,12 @@ def command_handler(stop_event):
 
             # ----------------- COMMANDS -----------------
             if "remind me" in command:
-                with Timer(f"Setting reminder: {command}"):
-                    set_reminder(command)
+                if set_reminder is not None:
+                    with Timer(f"Setting reminder: {command}"):
+                        set_reminder(command)
+                else:
+                    StatusIndicator.warning("Reminder feature is not available")
+                    speak("Sorry, the reminder feature is not available yet.")
 
             elif "goodbye" in command or "exit" in command:
                 StatusIndicator.info("Shutting down...")
